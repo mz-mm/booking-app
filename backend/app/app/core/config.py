@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_server}"
+
     model_config = SettingsConfigDict(env_file="../../../../.env")
 
 
