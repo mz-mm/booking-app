@@ -6,8 +6,6 @@ from sqlalchemy.sql.expression import text
 
 
 class Booking(Base):
-    __tablename__ = "form_submissions"
-
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
     avg_event_time = Column(Integer, nullable=False)
     start_time = Column(Integer, nullable=False)

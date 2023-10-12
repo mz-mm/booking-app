@@ -5,8 +5,6 @@ from sqlalchemy.sql.expression import text
 
 
 class Form(Base):
-    __tablename__ = "forms"
-
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
     email = Column(String, nullable=False, unique=True)
     name = Column(String, nullable=False)
