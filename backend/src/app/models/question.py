@@ -1,11 +1,12 @@
-from ..db.base_class import Base
+from app.db.base_class import Base
+
 from sqlalchemy import Column, String, Integer
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
 
 
-class FormSubmission(Base):
-    __tablename__ = "form_submissions"
+class Question(Base):
+    __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
     email = Column(String, nullable=False, unique=True)

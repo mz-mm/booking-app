@@ -6,6 +6,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "Booking app"
 
     postgres_server: str
     postgres_host: str
@@ -17,9 +18,9 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_server}"
-
     model_config = SettingsConfigDict(env_file="../../../../.env")
 
 
 settings = Settings()
+
+SQLALCHEMY_DATABASE_URI = f"postgresql://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_server}"
