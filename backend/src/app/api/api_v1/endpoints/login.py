@@ -13,7 +13,7 @@ from app.core.config import settings
 router = APIRouter()
 
 
-@router.post("/login/access-token", response_model=schemas.Token)
+@router.post("/access-token", response_model=schemas.Token)
 def login_access_token(db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
 
     user = crud.user.authenticate(
@@ -22,9 +22,6 @@ def login_access_token(db: Session = Depends(deps.get_db), form_data: OAuth2Pass
     if not user:
         raise HTTPException(
             status_code=400, detail="Incorrect email or password")
-
-    elif not crud.user.is_active(user):
-        raise HTTPException(status_code=400, detail="Inactive user")
 
     access_token_expires = timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -37,6 +34,6 @@ def login_access_token(db: Session = Depends(deps.get_db), form_data: OAuth2Pass
     }
 
 
-@router.post("/login/test-token", response_model=schemas.User)
+@router.post("/test-token", response_model=schemas.User)
 def test_token(current_user: models.User = Depends(deps.get_current_user)) -> Any:
     return current_user

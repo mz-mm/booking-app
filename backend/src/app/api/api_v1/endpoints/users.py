@@ -17,7 +17,7 @@ def create_user(*, db: Session = Depends(deps.get_db), user_in: schemas.UserCrea
     if user:
         raise HTTPException(
             status_code=400,
-            detail="The user with this username already exists in the system.",
+            detail="The user with this email already exists in the system.",
         )
     user = crud.user.create(db, obj_in=user_in)
 
@@ -25,7 +25,7 @@ def create_user(*, db: Session = Depends(deps.get_db), user_in: schemas.UserCrea
 
 
 @router.get("/{user_id}", response_model=schemas.User)
-def read_user_by_id(user_id: int, current_user: models.User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
+def read_user_by_id(user_id: str, current_user: models.User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
 
     user = crud.user.get(db, id=user_id)
 

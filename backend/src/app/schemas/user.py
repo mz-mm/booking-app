@@ -20,7 +20,7 @@ class UserUpdate(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: Optional[int] = None
+    id: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -34,4 +34,3 @@ class User(UserInDBBase):
 # Additional properties stored in DB
 class UserInDB(UserInDBBase):
     hashed_password: str
-
