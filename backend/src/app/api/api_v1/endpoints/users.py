@@ -4,13 +4,15 @@ from sqlalchemy.orm import Session
 from app import schemas, crud, models
 from app.api import deps
 
-
 router = APIRouter()
 
 
 @router.post("/", response_model=schemas.User)
-def create_user(*, db: Session = Depends(deps.get_db), user_in: schemas.UserCreate,):
-
+def create_user(
+        *,
+        db: Session = Depends(deps.get_db),
+        user_in: schemas.UserCreate
+):
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
@@ -23,11 +25,23 @@ def create_user(*, db: Session = Depends(deps.get_db), user_in: schemas.UserCrea
 
 
 @router.get("/{user_id}", response_model=schemas.User)
-def read_user_by_id(user_id: str, current_user: models.User = Depends(deps.get_current_user), db: Session = Depends(deps.get_db)):
-
+def read_user_by_id(
+        user_id: int,
+        current_user: models.User = Depends(deps.get_current_user),
+        db: Session = Depends(deps.get_db)
+):
     user = crud.user.get(db, id=user_id)
 
-    if user == current_user:
-        return user
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="This user does not exist."
+        )
+
+    if user != current_user:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized."
+        )
 
     return user

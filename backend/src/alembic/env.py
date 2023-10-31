@@ -2,10 +2,16 @@ from logging.config import fileConfig
 
 import os
 
+from dotenv import load_dotenv
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+from app.db.base import Base
+
+load_dotenv()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,7 +27,6 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 
-from app.db.base import Base
 
 target_metadata = Base.metadata
 
@@ -29,6 +34,7 @@ target_metadata = Base.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
 
 def get_url():
     user = os.getenv("POSTGRES_USER", "postgres")
@@ -76,7 +82,6 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(
         configuration, prefix="sqlalchemy.", poolclass=pool.NullPool,
     )
-
 
     with connectable.connect() as connection:
         context.configure(

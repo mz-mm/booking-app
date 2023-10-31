@@ -10,8 +10,8 @@ class UserBase(BaseModel):
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
-    email: EmailStr
-    password: str
+    email: EmailStr = None
+    password: str = None
 
 
 # Properties to receive via API on update
@@ -20,10 +20,10 @@ class UserUpdate(UserBase):
 
 
 class UserInDBBase(UserBase):
-    id: Optional[str] = None
+    id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 # Additional properties to return via API

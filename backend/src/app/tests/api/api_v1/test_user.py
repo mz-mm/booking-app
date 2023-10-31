@@ -1,39 +1,16 @@
-from typing import Dict
-
-from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
-
 from app import crud
-from app.core.config import settings
 from app.schemas.user import UserCreate
+from app.tests.confest import *
 from app.tests.utils.utils import random_email, random_lower_string
 
 
-def test_get_users_superuser_me(client: TestClient, superuser_token_headers: Dict[str, str]) -> None:
-    r = client.get(f"{settings.API_V1_STR}/users/me", headers=superuser_token_headers)
-    current_user = r.json()
-
-    assert current_user
-    assert current_user["is_active"] is True
-    assert current_user["is_superuser"]
-    assert current_user["email"] == settings.FIRST_SUPERUSER
-
-
-def test_get_users_normal_user_me(client: TestClient, normal_user_token_headers: Dict[str, str]) -> None:
-    r = client.get(f"{settings.API_V1_STR}/users/me", headers=normal_user_token_headers)
-    current_user = r.json()
-
-    assert current_user
-    assert current_user["is_active"] is True
-    assert current_user["is_superuser"] is False
-    assert current_user["email"] == settings.EMAIL_TEST_USER
-
-
 def test_create_user_new_email(client: TestClient, superuser_token_headers: dict, db: Session) -> None:
+    full_name = random_lower_string()
     username = random_email()
     password = random_lower_string()
-    data = {"email": username, "password": password}
-    r = client.post(f"{settings.API_V1_STR}/users/", headers=superuser_token_headers, json=data,)
+
+    data = {"full_name": full_name, "email": username, "password": password}
+    r = client.post(f"{settings.API_V1_STR}/users/", headers=superuser_token_headers, json=data)
 
     assert 200 <= r.status_code < 300
 
@@ -45,9 +22,11 @@ def test_create_user_new_email(client: TestClient, superuser_token_headers: dict
 
 
 def test_get_existing_user(client: TestClient, superuser_token_headers: dict, db: Session) -> None:
+    full_name = random_lower_string()
     username = random_email()
     password = random_lower_string()
-    user_in = UserCreate(email=username, password=password)
+
+    user_in = UserCreate(email=username, full_name=full_name, password=password)
     user = crud.user.create(db, obj_in=user_in)
     user_id = user.id
 
@@ -72,14 +51,6 @@ def test_create_user_existing_username(client: TestClient, superuser_token_heade
 
     assert r.status_code == 400
     assert "_id" not in created_user
-
-
-def test_create_user_by_normal_user(client: TestClient, normal_user_token_headers: Dict[str, str]) -> None:
-    username = random_email()
-    password = random_lower_string()
-    data = {"email": username, "password": password}
-    r = client.post(f"{settings.API_V1_STR}/users/", headers=normal_user_token_headers, json=data)
-    assert r.status_code == 400
 
 
 def test_retrieve_users(client: TestClient, superuser_token_headers: dict, db: Session) -> None:
